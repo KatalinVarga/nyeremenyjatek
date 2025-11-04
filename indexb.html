@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<title>Kód Ellenőrző</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #4308A0;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  input, button {
+    padding: 1rem 2rem;
+    font-size: 1.8rem;
+    border-radius: 12px;
+    border: none;
+    margin: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  input {
+    width: 20rem;
+    max-width: 80vw;
+    outline: none;
+  }
+  button {
+    background: #FD9800;
+    color: white;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #43a047;
+  }
+  #result {
+    margin-top: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    min-height: 3.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  /* Celebratory GIF */
+  #celebrationGif {
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    display: none;
+    pointer-events: none;
+  }
+  /* Fireworks container */
+  #fireworks {
+    position: absolute;
+    top: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    user-select: none;
+  }
+  /* Sad mouth animation */
+  .sad-mouth {
+    stroke: #ff4c4c;
+    stroke-width: 5;
+    fill: none;
+    animation: sadMouthMove 1.5s ease-in-out infinite alternate;
+  }
+  @keyframes sadMouthMove {
+    0% { transform: translateY(0) }
+    100% { transform: translateY(6px) }
+  }
+</style>
+</head>
+<body>
+
+<h2>Írd be a kódod, hogy ellenőrizd, nyertél-e!</h2>
+<input type="text" id="codeInput" placeholder="Kód" aria-label="Kód">
+<button onclick="checkCode()">Ellenőrzés</button>
+
+<div id="result" aria-live="polite"></div>
+
+<!-- Celebratory GIF -->
+<img id="celebrationGif" src="folder/imgs/celebration.gif" alt="Celebration animation">
+
+<!-- Fireworks SVG -->
+<svg id="fireworks" width="300" height="200" viewBox="0 0 300 200" fill="none" style="display:none;">
+<circle cx="150" cy="100" r="10" fill="#ffcc00" opacity="0">
+  <animate attributeName="r" values="10;40" dur="0.6s" repeatCount="indefinite" />
+  <animate attributeName="opacity" values="1;0" dur="0.6s" repeatCount="indefinite" />
+</circle>
+<g>
+  <line x1="150" y1="100" x2="150" y2="30" stroke="#ff8c00" stroke-width="3" opacity="0">
+    <animate attributeName="opacity" values="1;0" dur="0.6s" repeatCount="indefinite" />
+  </line>
+  <line x1="150" y1="100" x2="210" y2="50" stroke="#ff8c00" stroke-width="3" opacity="0">
+    <animate attributeName="opacity" values="1;0" dur="0.6s" repeatCount="indefinite" />
+  </line>
+  <line x1="150" y1="100" x2="90" y2="50" stroke="#ff8c00" stroke-width="3" opacity="0">
+    <animate attributeName="opacity" values="1;0" dur="0.6s" repeatCount="indefinite" />
+  </line>
+</g>
+</svg>
+
+<audio id="winSound" src="https://freesound.org/data/previews/178/178205_334829-lq.mp3" preload="auto"></audio>
+<audio id="loseSound" src="https://freesound.org/data/previews/256/256113_5061365-lq.mp3" preload="auto"></audio>
+
+<script>
+  const codes = {
+    "ABC123": true,
+    "XYZ789": false,
+    "JKL456": true
+  };
+
+  const resultDiv = document.getElementById('result');
+  const fireworks = document.getElementById('fireworks');
+  const celebrationGif = document.getElementById('celebrationGif');
+  const winSound = document.getElementById('winSound');
+  const loseSound = document.getElementById('loseSound');
+
+  function showFireworks() {
+    fireworks.style.display = 'block';
+    celebrationGif.style.display = 'block';
+    winSound.play();
+    setTimeout(() => {
+      fireworks.style.display = 'none';
+      celebrationGif.style.display = 'none';
+    }, 4000);
+  }
+
+  function showSadFace() {
+    loseSound.play();
+    resultDiv.innerHTML = `
+      <svg width="50" height="50" viewBox="0 0 100 100" aria-hidden="true" style="margin-right:1rem; stroke:#ff4c4c; stroke-width:5; fill:none;">
+        <circle cx="50" cy="50" r="40" />
+        <circle cx="35" cy="40" r="5" fill="#ff4c4c" />
+        <circle cx="65" cy="40" r="5" fill="#ff4c4c" />
+        <path class="sad-mouth" d="M30 70 Q50 50 70 70" />
+      </svg> 
+      <span>Sajnáljuk, ez a kód nem nyertes.</span>
+    `;
+  }
+
+  function checkCode() {
+    const input = document.getElementById('codeInput').value.trim().toUpperCase();
+
+    if (!input) {
+      resultDiv.textContent = "Kérjük, adj meg egy kódot!";
+      resultDiv.style.color = "red";
+      return;
+    }
+
+    if (input in codes) {
+      if (codes[input]) {
+        resultDiv.style.color = "lime";
+        resultDiv.textContent = "Gratulálunk! Megnyerted!";
+        showFireworks();
+      } else {
+        resultDiv.style.color = "#ff4c4c";
+        showSadFace();
+      }
+    } else {
+      resultDiv.textContent = "Érvénytelen kód.";
+      resultDiv.style.color = "red";
+    }
+  }
+</script>
+
+</body>
+</html>
