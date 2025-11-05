@@ -55,14 +55,14 @@
   }
   /* Celebratory GIF */
 #celebrationGif {
-position: absolute;
-    top: 0;
-    left: 0;
-  
-    width: 100vw;
-    height: 100vh;
-    display: none;
-    pointer-events: none;
+  position: fixed;  /* ✅ Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;  /* ✅ Changed from 100vw to 100vh */
+  object-fit: cover;  /* ✅ Added this */
+  display: none;
+  z-index: -1;
 }
   /* Fireworks container */
   #fireworks {
@@ -182,6 +182,7 @@ position: absolute;
 <img id="celebrationGif" src="congrat.gif" alt="Celebration animation">
 </body>
 </html>
+
 
 
 
