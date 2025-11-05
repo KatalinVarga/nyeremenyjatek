@@ -135,12 +135,29 @@
   const winSound = document.getElementById('winSound');
   const loseSound = document.getElementById('loseSound');
 
+  function playWinSoundThreeTimes() {
+  let playCount = 0;
+  
+  function playNext() {
+    if (playCount < 3) {
+      winSound.currentTime = 0;
+      winSound.play();
+      playCount++;
+    }
+  }
+  
+  playNext();
+  winSound.addEventListener('ended', playNext);
+  
+  setTimeout(() => {
+    winSound.removeEventListener('ended', playNext);
+  }, 10000);
+}
+
   function showFireworks() {
     fireworks.style.display = 'block';
     celebrationGif.style.display = 'block';
-    winSound.play();
-     winSound.play();
-     winSound.play();
+   playWinSoundThreeTimes();
     setTimeout(() => {
       fireworks.style.display = 'none';
       celebrationGif.style.display = 'none';
@@ -187,6 +204,7 @@
 
 </body>
 </html>
+
 
 
 
